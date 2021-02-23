@@ -1,25 +1,34 @@
 const express = require('express');
+const request = require('request');
 const router = express.Router();
 const gravatar = require('gravatar');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const config = require('config');
-const { check, validationResult } = require('express-validator');
-const normalize = require('normalize-url');
 
+// const { check, validationResult } = require('express-validator/check');
+const { check, validationResult } = require('express-validator');
+
+// Bring in a user model
 const User = require('../../models/User');
 
-// @route    POST api/users
-// @desc     Register user
-// @access   Public
+// @route  POST api/users
+// @desc   Register user
+// @access Public
+
+// // // Here I am using 'await' instead of .then in each case of a promise
+
+// Sending name, email and password in order to register a user
 router.post(
   '/',
-  check('name', 'Name is required').notEmpty(),
-  check('email', 'Please include a valid email').isEmail(),
-  check(
-    'password',
-    'Please enter a password with 6 or more characters'
-  ).isLength({ min: 6 }),
+  [
+    check('name', 'Name is required').not().isEmpty(),
+    check('email', 'Please, include a valid email').isEmail(),
+    check(
+      'password',
+      'Please, enter a password with 6 or more characters'
+    ).isLength({ min: 6 }),
+  ],
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -29,7 +38,8 @@ router.post(
     const { name, email, password } = req.body;
 
     try {
-      let user = await User.findOne({ email });
+      // See if user existse
+      let user = await User.findOne({ email: email });
 
       if (user) {
         return res
@@ -37,14 +47,15 @@ router.post(
           .json({ errors: [{ msg: 'User already exists' }] });
       }
 
-      const avatar = normalize(
-        gravatar.url(email, {
-          s: '200',
-          r: 'pg',
-          d: 'mm',
-        }),
-        { forceHttps: true }
-      );
+      // Get users gravatar
+      const avatar = gravatar.url(email, {
+        // size
+        s: '200',
+        // rating
+        r: 'pg',
+        // default image - mm
+        d: 'mm',
+      });
 
       user = new User({
         name,
@@ -53,12 +64,14 @@ router.post(
         password,
       });
 
+      // Encrypt password
+      // hashing, (10) - the larger the number the more secure password is but also slower
       const salt = await bcrypt.genSalt(10);
-
       user.password = await bcrypt.hash(password, salt);
 
       await user.save();
 
+      // Return jsonwebtoken - to allow user to log in right away, webtoken is required.
       const payload = {
         user: {
           id: user.id,
@@ -68,7 +81,7 @@ router.post(
       jwt.sign(
         payload,
         config.get('jwtSecret'),
-        { expiresIn: '5 days' },
+        { expiresIn: 360000 },
         (err, token) => {
           if (err) throw err;
           res.json({ token });

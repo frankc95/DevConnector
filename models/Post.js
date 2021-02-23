@@ -1,9 +1,10 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const PostSchema = new Schema({
+const PostSchema = new mongoose.Schema({
   user: {
     type: Schema.Types.ObjectId,
+    ref: 'users',
   },
   text: {
     type: String,
@@ -19,6 +20,7 @@ const PostSchema = new Schema({
     {
       user: {
         type: Schema.Types.ObjectId,
+        ref: 'users',
       },
     },
   ],
@@ -26,6 +28,7 @@ const PostSchema = new Schema({
     {
       user: {
         type: Schema.Types.ObjectId,
+        ref: 'users',
       },
       text: {
         type: String,
@@ -49,4 +52,5 @@ const PostSchema = new Schema({
   },
 });
 
-module.exports = mongoose.model('post', PostSchema);
+// Export variable 'User' that takes 2 parameters - model name of 'user' and Schema
+module.exports = Post = mongoose.model('post', PostSchema);
