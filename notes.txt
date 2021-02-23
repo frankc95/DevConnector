@@ -1,0 +1,12 @@
+Redux is a state manager used for larger apps. 
+there are other state managers. 
+there is context API built into React.
+
+Component level state - Register & login
+App level state - auth, prtofile, posts - app lvl allows access from any component within the app. Redux gives app level state. Think of it as a cloud that's all over the application.
+Due to redux and app level state, I can submit an action to through an event and I can data to go to any component.
+
+Redux store holds profile info. First, call an action to profile reducer, reducer will then decide what needs to be done through the state, eg delete post, update profile etc. Then the state will update each parent & child component.
+
+This aapp will have auth reducer, profile reducer, post reducer & alert reducer.
+ 
