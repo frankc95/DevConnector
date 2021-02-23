@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 
-// User Model for DB
 const UserSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -17,7 +16,6 @@ const UserSchema = new mongoose.Schema({
   },
   avatar: {
     type: String,
-    required: true,
   },
   date: {
     type: Date,
@@ -25,5 +23,4 @@ const UserSchema = new mongoose.Schema({
   },
 });
 
-// Export variable 'User' that takes 2 parameters - model name of 'user' and Schema
-module.exports = User = mongoose.model('user', UserSchema);
+module.exports = mongoose.model('user', UserSchema);

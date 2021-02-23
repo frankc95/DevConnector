@@ -4,34 +4,30 @@ const bcrypt = require('bcryptjs');
 const auth = require('../../middleware/auth');
 const jwt = require('jsonwebtoken');
 const config = require('config');
-
-const { check, validationResult } = require('express-validator');
+const { check, validationResult } = require('express-validator/check');
 
 const User = require('../../models/User');
 
-// @route  GET api/auth
-// @desc   Test route
-// @access Public
-
+// @route    GET api/auth
+// @desc     Get user by token
+// @access   Private
 router.get('/', auth, async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select('-password');
     res.json(user);
   } catch (err) {
-    console.error(err.messgae);
+    console.error(err.message);
     res.status(500).send('Server Error');
   }
 });
 
-// @route  POST api/auth
-// @desc   Authenticate user & get token
-// @access Public
-
-// Getting email and password in order to login a user
+// @route    POST api/auth
+// @desc     Authenticate user & get token
+// @access   Public
 router.post(
   '/',
   [
-    check('email', 'Please, include a valid email').isEmail(),
+    check('email', 'Please include a valid email').isEmail(),
     check('password', 'Password is required').exists(),
   ],
   async (req, res) => {
@@ -43,8 +39,7 @@ router.post(
     const { email, password } = req.body;
 
     try {
-      // See if user exists
-      let user = await User.findOne({ email: email });
+      let user = await User.findOne({ email });
 
       if (!user) {
         return res
@@ -60,7 +55,6 @@ router.post(
           .json({ errors: [{ msg: 'Invalid Credentials' }] });
       }
 
-      // Return jsonwebtoken - to allow user to log in right away, webtoken is required.
       const payload = {
         user: {
           id: user.id,

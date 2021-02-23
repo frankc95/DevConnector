@@ -1,7 +1,5 @@
 const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
 
-// Profile Model for DB
 const ProfileSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
@@ -42,7 +40,6 @@ const ProfileSchema = new mongoose.Schema({
       },
       location: {
         type: String,
-        required: true,
       },
       from: {
         type: Date,
@@ -113,5 +110,4 @@ const ProfileSchema = new mongoose.Schema({
   },
 });
 
-// Export variable 'User' that takes 2 parameters - model name of 'user' and Schema
-module.exports = Profile = mongoose.model('profile', ProfileSchema);
+module.exports = mongoose.model('profile', ProfileSchema);

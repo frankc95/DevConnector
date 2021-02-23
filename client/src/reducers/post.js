@@ -16,7 +16,7 @@ const initialState = {
   error: {},
 };
 
-export default function (state = initialState, action) {
+function postReducer(state = initialState, action) {
   const { type, payload } = action;
 
   switch (type) {
@@ -72,10 +72,12 @@ export default function (state = initialState, action) {
           comments: state.post.comments.filter(
             (comment) => comment._id !== payload
           ),
-          loading: false,
         },
+        loading: false,
       };
     default:
       return state;
   }
 }
+
+export default postReducer;
